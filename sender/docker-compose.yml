@@ -1,0 +1,58 @@
+version: "3"
+services:
+  pg-sender-db:
+    image: postgres:14-alpine3.18
+    container_name: sender_db
+    environment:
+      POSTGRES_DB: "sender_db"
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "password"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+      POSTGRES_INITDB_ARGS: '--encoding=UTF-8'
+    volumes:
+      - sender-db:/var/lib/postgresql/data
+    ports:
+      - "15431:5432"
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: sender
+    volumes:
+      - ./environment/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - sender-mongodb:/data/db
+      - sender-mongo-config:/data/configdb
+
+  redis:
+    image: redis:7.2-rc-alpine
+    restart: always
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --logLevel warning --requirepass YXNkZmFzZGY=
+    volumes:
+      - sender-redis:/data
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: user
+      MINIO_ROOT_PASSWORD: password
+    volumes:
+      - ./environment/minio/data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address :9001
+
+volumes:
+  sender-db:
+  sender-mongodb:
+  sender-mongo-config:
+  sender-redis:
+  storage-minio:
+

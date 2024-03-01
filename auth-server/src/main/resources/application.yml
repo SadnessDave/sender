@@ -1,0 +1,24 @@
+spring:
+  security:
+    oauth2:
+      authorizationserver:
+        issuer-url: http://localhost:9090
+  datasource:
+    url: jdbc:postgresql://localhost:15432/auth_server_db
+    username: user
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    show-sql: true
+  liquibase:
+    change-log: classpath:liquibase/master.xml
+
+server:
+  port: 9090
+  address: localhost
+
+logging:
+  level:
+    liquibase: info

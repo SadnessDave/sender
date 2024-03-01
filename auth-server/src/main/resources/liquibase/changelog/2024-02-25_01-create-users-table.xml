@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <!--Create application data table-->
+    <changeSet id="create-users-table" author="dave">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="users"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="users">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" primaryKeyName="users_pk"/>
+            </column>
+
+            <column name="username" type="varchar(300)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="varchar(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(300)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="role" type="varchar(300)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <sql>
+            /*admin_password*/ /*$2y$10$TapDNuk071vPholImX/XIO0hvT3zs86t2vBCbs.fn6QRH9j1CzFR6*/
+            INSERT INTO users(username, password, email, role)
+            VALUES ('admin', 'password', 'admin@email.com',
+                    'ROLE_ADMIN')
+        </sql>
+
+    </changeSet>
+
+    <changeSet id="create-clients-table" author="dave">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="clients"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="clients">
+            <column name="id" type="varchar(40)">
+                <constraints primaryKey="true" primaryKeyName="clients_pk"/>
+            </column>
+
+            <column name="client_name" type="varchar(300)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="client_id" type="varchar(300)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="client_secret" type="varchar(300)">
+                <constraints nullable="false" />
+            </column>
+            <column name="redirect_uri" type="varchar(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="scope" type="varchar(300)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <sql>
+            /*dGVzdC1jbGllbnQ6dGVzdC1jbGllbnQ=
+            dGVzdC1jbGllbnQtMjp0ZXN0LWNsaWVudC0y*/
+            INSERT INTO clients(id, client_id, client_secret, client_name, redirect_uri, scope)
+            VALUES ('test-id', 'test-client', 'test-client', 'test-client', 'http://localhost:5000/code', 'read'),
+                   ('test-id-2', 'test-client-2', 'test-client-2', 'test-client-2', 'http://localhost:5000/code', 'write')
+        </sql>
+    </changeSet>
+</databaseChangeLog>
